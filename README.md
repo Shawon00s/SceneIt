@@ -1,6 +1,6 @@
 # SceneIt
 
-Welcome to SceneIt - an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Welcome to SceneIt - a movie discovery app built with [Expo](https://expo.dev) and created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
 ## Get started
 
@@ -10,7 +10,19 @@ Welcome to SceneIt - an [Expo](https://expo.dev) project created with [`create-e
    npm install
    ```
 
-2. Start the app
+2. Set up environment variables
+
+   ```bash
+   # Copy the example environment file
+   cp .env.example .env
+   
+   # Edit the .env file and add your actual API keys and configuration
+   # Replace the placeholder values with your real credentials
+   ```
+
+   **Important:** Make sure to replace all placeholder values in the `.env` file with your actual API keys and configuration before running the app.
+
+3. Start the app
 
    ```bash
    npx expo start
@@ -24,6 +36,23 @@ In the output, you'll find options to open the app in a
 - [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+
+## Environment Configuration
+
+This project requires environment variables to function properly. Follow these steps:
+
+1. **Copy the example file:**
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Edit the `.env` file** and replace the example values with your actual:
+   - API keys
+   - Database URLs
+   - Authentication secrets
+   - Any other required configuration
+
+3. **Never commit your `.env` file** to version control as it contains sensitive information.
 
 ## Get a fresh project
 
