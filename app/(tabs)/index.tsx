@@ -1,11 +1,11 @@
+import MovieCard from "@/components/MovieCard";
 import SearchBar from "@/components/SearchBar";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 import { fetchMovies } from "@/services/api";
-import useFetch from "@/services/useFetch";
+import useFetch from "@/services/usefetch";
 import { useRouter } from "expo-router";
 import { ActivityIndicator, FlatList, Image, ScrollView, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   const router = useRouter();
@@ -49,7 +49,9 @@ export default function Index() {
               <FlatList
                 data={movies}
                 renderItem={({ item }) => (
-                  <Text className="text-white">{item.title}</Text>
+                  <MovieCard
+                    {...item}
+                  />
                 )}
                 keyExtractor={(item) => item.id.toString()}
                 numColumns={3}
@@ -59,6 +61,8 @@ export default function Index() {
                   paddingRight: 5,
                   marginBottom: 10
                 }}
+                className="mt-2 pb-32"
+                scrollEnabled={false}
               />
             </>
           </View>
