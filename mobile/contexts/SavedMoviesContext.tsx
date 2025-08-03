@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface SavedMoviesContextType {
@@ -35,40 +35,45 @@ export const SavedMoviesProvider: React.FC<{ children: React.ReactNode }> = ({ c
         }
     };
 
-    const saveTotStorage = async (movies: Movie[]) => {
+    const saveTotStorage = useCallback(async (movies: Movie[]) => {
         try {
             await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(movies));
         } catch (error) {
             console.error('Error saving movies to storage:', error);
         }
-    };
+    }, []);
 
-    const addToSaved = (movie: Movie) => {
-        const updatedMovies = [...savedMovies, movie];
-        setSavedMovies(updatedMovies);
-        saveTotStorage(updatedMovies);
-    };
+    const addToSaved = useCallback((movie: Movie) => {
+        setSavedMovies(prevMovies => {
+            const updatedMovies = [...prevMovies, movie];
+            saveTotStorage(updatedMovies);
+            return updatedMovies;
+        });
+    }, [saveTotStorage]);
 
-    const removeFromSaved = (movieId: number) => {
-        const updatedMovies = savedMovies.filter(movie => movie.id !== movieId);
-        setSavedMovies(updatedMovies);
-        saveTotStorage(updatedMovies);
-    };
+    const removeFromSaved = useCallback((movieId: number) => {
+        setSavedMovies(prevMovies => {
+            const updatedMovies = prevMovies.filter(movie => movie.id !== movieId);
+            saveTotStorage(updatedMovies);
+            return updatedMovies;
+        });
+    }, [saveTotStorage]);
 
-    const isMovieSaved = (movieId: number) => {
+    const isMovieSaved = useCallback((movieId: number) => {
         return savedMovies.some(movie => movie.id === movieId);
-    };
+    }, [savedMovies]);
+
+    // Memoize context value to prevent unnecessary re-renders
+    const contextValue = useMemo(() => ({
+        savedMovies,
+        addToSaved,
+        removeFromSaved,
+        isMovieSaved,
+        loading,
+    }), [savedMovies, addToSaved, removeFromSaved, isMovieSaved, loading]);
 
     return (
-        <SavedMoviesContext.Provider
-            value={{
-                savedMovies,
-                addToSaved,
-                removeFromSaved,
-                isMovieSaved,
-                loading,
-            }}
-        >
+        <SavedMoviesContext.Provider value={contextValue}>
             {children}
         </SavedMoviesContext.Provider>
     );

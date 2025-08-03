@@ -2,9 +2,9 @@ import MovieCard from '@/components/MovieCard';
 import SearchBar from '@/components/SearchBar';
 import { icons } from '@/constants/icons';
 import { images } from '@/constants/images';
-import { fetchMovies, trackMovieSearch } from '@/services/api';
+import { fetchMovies } from '@/services/api';
 import useFetch from '@/services/useFetch';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { ActivityIndicator, FlatList, Image, Text, View } from 'react-native';
 
 const search = () => {
@@ -35,17 +35,60 @@ const search = () => {
     return () => clearTimeout(timeoutId);
   }, [searchQuery]);
 
-  // Track movie searches when results are loaded
-  useEffect(() => {
-    if (movies && movies.length > 0 && searchQuery.trim()) {
-      // Track the first few results as "searched" movies
-      movies.slice(0, 5).forEach(movie => {
-        trackMovieSearch(movie).catch(err =>
-          console.log('Failed to track search for:', movie.title)
-        );
-      });
-    }
-  }, [movies, searchQuery]);
+  // Memoized render function for FlatList
+  const renderMovieItem = useCallback(({ item }: { item: Movie }) => (
+    <MovieCard {...item} />
+  ), []);
+
+  // Memoized key extractor
+  const keyExtractor = useCallback((item: Movie) => item.id.toString(), []);
+
+  // Memoized ListHeaderComponent
+  const ListHeaderComponent = useMemo(() => (
+    <>
+      <View className="w-full flex-row justify-center mt-20 items-center">
+        <Image source={icons.logo} className="w-12 h-10" />
+      </View>
+
+      <View className='my-5'>
+        <SearchBar
+          placeholder='Search movies ...'
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+      </View>
+
+      {loading && (
+        <ActivityIndicator size="large" color="#0000ff" />
+      )}
+
+      {error && (
+        <Text className='text-red-500 px-5 my-3 text-center'>
+          {typeof error === 'string' ? error : (error as any)?.message || 'Unknown error'}
+        </Text>
+      )}
+
+      {!loading && !error && searchQuery.trim() && movies && movies.length > 0 && (
+        <Text className='text-xl text-white font-bold'>
+          Search Results for {' '}
+          <Text className='text-accent'>{searchQuery}</Text>
+        </Text>
+      )}
+    </>
+  ), [searchQuery, loading, error, movies]);
+
+  // Memoized ListEmptyComponent
+  const ListEmptyComponent = useMemo(() => (
+    !loading && !error ? (
+      <View>
+        <Text className="text-white text-center">
+          {searchQuery.trim() ?
+            `No results found for "${searchQuery}"`
+            : "Start typing to search for movies"}
+        </Text>
+      </View>
+    ) : null
+  ), [loading, error, searchQuery]);
 
   return (
     <View className="flex-1 bg-primary">
@@ -53,10 +96,8 @@ const search = () => {
 
       <FlatList
         data={movies}
-        renderItem={({ item }) => (
-          <MovieCard {...item} />
-        )}
-        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderMovieItem}
+        keyExtractor={keyExtractor}
         className='px-5'
         numColumns={3}
         columnWrapperStyle={{
@@ -67,51 +108,13 @@ const search = () => {
         contentContainerStyle={{
           paddingBottom: 100
         }}
-        ListHeaderComponent={
-          <>
-            <View className="w-full flex-row justify-center mt-20 items-center">
-              <Image source={icons.logo} className="w-12 h-10" />
-            </View>
-
-            <View className='my-5'>
-              <SearchBar
-                placeholder='Search movies ...'
-                value={searchQuery}
-                onChangeText={(text: string) => setSearchQuery(text)}
-              />
-
-            </View>
-
-            {loading && (
-              <ActivityIndicator size="large" color="#0000ff" />
-            )}
-
-            {error && (
-              <Text className='text-red-500 px-5 my-3 text-center'>
-                {typeof error === 'string' ? error : (error as any)?.message || 'Unknown error'}
-              </Text>
-            )}
-
-            {!loading && !error && searchQuery.trim() && movies && movies.length > 0 && (
-              <Text className='text-xl text-white font-bold'>
-                Search Results for {' '}
-                <Text className='text-accent'>{searchQuery}</Text>
-              </Text>
-            )}
-          </>
-        }
-        ListEmptyComponent={
-          !loading && !error ? (
-            <View>
-              <Text>
-                {searchQuery.trim() ?
-                  `No results found for "${searchQuery}"`
-                  : "No results found"}
-              </Text>
-            </View>
-          )
-            : null
-        }
+        ListHeaderComponent={ListHeaderComponent}
+        ListEmptyComponent={ListEmptyComponent}
+        removeClippedSubviews={true} // Optimize memory usage
+        maxToRenderPerBatch={15} // Render 15 items per batch (5 rows of 3)
+        windowSize={10} // Keep 10 screens worth of items in memory
+        initialNumToRender={15} // Render first 15 items immediately
+        getItemLayout={undefined} // Let FlatList calculate for better performance with variable heights
       />
     </View>
   );

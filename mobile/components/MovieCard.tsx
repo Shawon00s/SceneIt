@@ -1,10 +1,10 @@
 import { icons } from '@/constants/icons'
 import { Link } from 'expo-router'
-import React from 'react'
+import React, { memo } from 'react'
 import { Image, Text, TouchableOpacity, View } from 'react-native'
 import SaveButton from './SaveButton'
 
-const MovieCard = ({ id, poster_path, title, vote_average, release_date, ...movie }: Movie) => {
+const MovieCard = memo(({ id, poster_path, title, vote_average, release_date, ...movie }: Movie) => {
     const fullMovie: Movie = { id, poster_path, title, vote_average, release_date, ...movie };
 
     return (
@@ -40,6 +40,8 @@ const MovieCard = ({ id, poster_path, title, vote_average, release_date, ...movi
             </View>
         </View>
     )
-}
+})
+
+MovieCard.displayName = 'MovieCard';
 
 export default MovieCard
