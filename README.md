@@ -1,79 +1,259 @@
-# SceneIt
+# 🎬 SceneIt
 
-Welcome to SceneIt - a movie discovery app built with [Expo](https://expo.dev) and created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+SceneIt is a modern movie discovery mobile application built with React Native, Expo, and Node.js. Discover trending movies, search for your favorites, save movies to watch later, and get personalized recommendations.
 
-## Get started
+## 📱 Features
 
-1. Install dependencies
+- **🔥 Trending Movies**: Discover what's trending this week
+- **🔍 Movie Search**: Search through thousands of movies with real-time results
+- **💾 Save Movies**: Save movies to your personal watchlist
+- **🎭 Movie Details**: View detailed information including cast, ratings, and synopsis
+- **📱 Cross-Platform**: Available on iOS, Android, and Web
+- **🎨 Modern UI**: Beautiful interface with NativeWind (Tailwind CSS for React Native)
+- **🔐 User Authentication**: Secure user accounts and personalized experience
+- **🚀 Real-time Data**: Powered by The Movie Database (TMDB) API
 
+## 🏗️ Architecture
+
+This project follows a full-stack architecture:
+
+### Frontend (Mobile App)
+- **Framework**: React Native with Expo
+- **Routing**: Expo Router (file-based routing)
+- **Styling**: NativeWind (Tailwind CSS)
+- **State Management**: React Context API
+- **API Integration**: Custom hooks with TypeScript
+
+### Backend (API Server)
+- **Runtime**: Node.js with Express.js
+- **Database**: MongoDB with Mongoose ODM
+- **Authentication**: JWT (JSON Web Tokens) with bcrypt
+- **External APIs**: The Movie Database (TMDB) API integration
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js (v16 or higher)
+- npm or yarn
+- MongoDB database
+- TMDB API key ([Get one here](https://www.themoviedb.org/settings/api))
+- Expo CLI (optional, for additional features)
+
+### Installation
+
+1. **Clone the repository**
    ```bash
+   git clone https://github.com/Shawon00s/SceneIt.git
+   cd SceneIt
+   ```
+
+2. **Install dependencies for both frontend and backend**
+   ```bash
+   # Install mobile app dependencies
+   cd mobile
+   npm install
+
+   # Install backend dependencies
+   cd ../backend
    npm install
    ```
 
-2. Set up environment variables
+3. **Set up environment variables**
 
-   ```bash
-   # Copy the example environment file
-   cp .env.example .env
-   
-   # Edit the .env file and add your actual API keys and configuration
-   # Replace the placeholder values with your real credentials
+   **For the mobile app** (`mobile/.env`):
+   ```env
+   EXPO_PUBLIC_MOVIE_API_KEY=your_tmdb_api_key_here
+   EXPO_PUBLIC_API_URL=http://localhost:3000/api
    ```
 
-   **Important:** Make sure to replace all placeholder values in the `.env` file with your actual API keys and configuration before running the app.
-
-3. Start the app
-
-   ```bash
-   npx expo start
+   **For the backend** (`backend/.env`):
+   ```env
+   PORT=3000
+   MONGODB_URI=mongodb://localhost:27017/sceneit
+   JWT_SECRET=your_jwt_secret_here
+   TMDB_API_KEY=your_tmdb_api_key_here
+   NODE_ENV=development
    ```
 
-In the output, you'll find options to open the app in a
+4. **Start the development servers**
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Environment Configuration
-
-This project requires environment variables to function properly. Follow these steps:
-
-1. **Copy the example file:**
+   **Start the backend server:**
    ```bash
-   cp .env.example .env
+   cd backend
+   npm run dev
    ```
 
-2. **Edit the `.env` file** and replace the example values with your actual:
-   - API keys
-   - Database URLs
-   - Authentication secrets
-   - Any other required configuration
+   **Start the mobile app:**
+   ```bash
+   cd mobile
+   npm start
+   ```
 
-3. **Never commit your `.env` file** to version control as it contains sensitive information.
+5. **Run the app**
+   - Scan the QR code with Expo Go app (iOS/Android)
+   - Press `i` for iOS simulator
+   - Press `a` for Android emulator
+   - Press `w` for web browser
 
-## Get a fresh project
+## 📁 Project Structure
 
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+SceneIt/
+├── mobile/                          # React Native mobile app
+│   ├── app/                         # App screens (file-based routing)
+│   │   ├── (tabs)/                  # Tab navigation screens
+│   │   │   ├── index.tsx           # Home screen (trending/popular movies)
+│   │   │   ├── search.tsx          # Search screen
+│   │   │   ├── saved.tsx           # Saved movies screen
+│   │   │   └── profile.tsx         # User profile screen
+│   │   ├── movies/[id].tsx         # Movie details screen
+│   │   └── _layout.tsx             # Root layout
+│   ├── components/                  # Reusable UI components
+│   │   ├── MovieCard.tsx           # Movie card component
+│   │   ├── SaveButton.tsx          # Save movie button
+│   │   └── SearchBar.tsx           # Search input component
+│   ├── services/                    # API services and custom hooks
+│   │   ├── api.ts                  # TMDB API integration
+│   │   ├── chatApi.ts              # Backend API integration
+│   │   ├── useFetch.ts             # Data fetching hook
+│   │   └── useInfiniteScroll.ts    # Infinite scroll hook
+│   ├── contexts/                    # React Context providers
+│   │   └── SavedMoviesContext.tsx  # Saved movies state management
+│   ├── constants/                   # App constants
+│   │   ├── icons.ts                # Icon constants
+│   │   └── images.ts               # Image constants
+│   └── interfaces/                  # TypeScript type definitions
+│       └── interfaces.d.ts         # Movie and API interfaces
+├── backend/                         # Node.js API server
+│   ├── src/
+│   │   ├── controllers/            # Route controllers
+│   │   │   └── trendingController.js
+│   │   ├── models/                 # MongoDB models
+│   │   │   ├── User.js            # User model
+│   │   │   └── MovieSearch.js     # Movie search tracking
+│   │   ├── routes/                 # API routes
+│   │   │   ├── authRoutes.js      # Authentication routes
+│   │   │   └── trendingRoutes.js  # Trending movies routes
+│   │   ├── lib/
+│   │   │   └── db.js              # Database connection
+│   │   └── index.js               # Server entry point
+│   └── package.json
+└── README.md
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 🔧 Available Scripts
 
-## Learn more
+### Mobile App (`mobile/`)
+```bash
+npm start          # Start Expo development server
+npm run android    # Run on Android emulator
+npm run ios        # Run on iOS simulator
+npm run web        # Run in web browser
+npm run lint       # Run ESLint
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+### Backend (`backend/`)
+```bash
+npm start          # Start production server
+npm run dev        # Start development server with nodemon
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## 🛠️ Technology Stack
 
-## Join the community
+### Frontend
+- **React Native** - Cross-platform mobile development
+- **Expo** - Development platform and tools
+- **TypeScript** - Type-safe JavaScript
+- **NativeWind** - Tailwind CSS for React Native
+- **Expo Router** - File-based navigation
+- **React Context** - State management
+- **Expo Image** - Optimized image component
 
-Join our community of developers creating universal apps.
+### Backend
+- **Node.js** - JavaScript runtime
+- **Express.js** - Web application framework
+- **MongoDB** - NoSQL database
+- **Mongoose** - MongoDB object modeling
+- **JWT** - JSON Web Tokens for authentication
+- **bcryptjs** - Password hashing
+- **CORS** - Cross-origin resource sharing
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### External APIs
+- **The Movie Database (TMDB)** - Movie data and images
+
+## 🔐 Authentication
+
+SceneIt implements secure user authentication with:
+- JWT token-based authentication
+- Password encryption using bcrypt
+- Protected routes for saved movies and user profiles
+- Secure token storage using AsyncStorage
+
+## 🎨 UI/UX Features
+
+- **Responsive Design**: Optimized for all screen sizes
+- **Dark Theme**: Modern dark interface
+- **Smooth Animations**: Using React Native Reanimated
+- **Infinite Scroll**: Seamless movie browsing experience
+- **Image Optimization**: Fast loading with Expo Image
+- **Search Debouncing**: Optimized search performance
+
+## 📱 App Screens
+
+1. **Home Tab**: Browse trending and popular movies
+2. **Search Tab**: Search for specific movies
+3. **Saved Tab**: View your saved watchlist
+4. **Profile Tab**: User account management
+5. **Movie Details**: Detailed movie information
+
+## 🔄 API Endpoints
+
+### Authentication
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `GET /api/auth/profile` - Get user profile
+
+### Movies
+- `GET /api/trending/movies` - Get trending movies
+- `POST /api/trending/search` - Track movie searches
+
+## 🚀 Deployment
+
+### Mobile App
+The mobile app can be deployed using:
+- **Expo Application Services (EAS)** for app store deployment
+- **Expo Web** for web deployment
+
+### Backend
+The backend can be deployed to:
+- **Heroku** - Easy deployment with Git
+- **Railway** - Modern deployment platform
+- **DigitalOcean** - Cloud infrastructure
+- **AWS** - Amazon Web Services
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- [The Movie Database (TMDB)](https://www.themoviedb.org/) for providing the movie data API
+- [Expo](https://expo.dev/) for the amazing development platform
+- [React Native](https://reactnative.dev/) for cross-platform mobile development
+
+## 📞 Support
+
+If you have any questions or need help with setup, please open an issue on GitHub or contact the development team.
+
+---
+
+Made with ❤️ by the SceneIt Team
