@@ -109,7 +109,7 @@ export default function Index() {
         </View>
       ) : hasError ? (
         <View className="flex-1 justify-center items-center px-5">
-          <Image source={icons.logo} className="w-12 h-10 mb-5" />
+          <Image source={icons.logo} className="w-auto h-10 mb-5" />
           <Text className="text-white text-center">
             Error: {typeof hasError === 'string' ? hasError : 'Unable to load movies'}
           </Text>
