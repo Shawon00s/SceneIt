@@ -2,29 +2,13 @@ import MovieCard from "@/components/MovieCard";
 import SearchBar from "@/components/SearchBar";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
-import { fetchMoviesPage, fetchTrendingMovies } from "@/services/api";
+import { fetchMoviesPage } from "@/services/api";
 import useInfiniteScroll from "@/services/useInfiniteScroll";
-import useFetch from "@/services/useFetch";
 import { useRouter } from "expo-router";
 import { ActivityIndicator, SectionList, Image, Text, View } from "react-native";
-import { useEffect, useState } from "react";
 
 export default function Index() {
   const router = useRouter();
-
-  // Fetch trending movies (with fallback to empty array on error)
-  const {
-    data: trendingMovies,
-    loading: trendingLoading,
-    error: trendingError,
-  } = useFetch(async () => {
-    try {
-      return await fetchTrendingMovies({ limit: 10, timeframe: 'week' });
-    } catch (error) {
-      console.log('Trending movies not available, falling back to popular movies only');
-      return []; // Return empty array as fallback
-    }
-  });
 
   // Fetch popular movies with infinite scroll
   const {
@@ -52,29 +36,8 @@ export default function Index() {
       return chunks;
     };
 
-    // Add trending section if available
-    if (trendingMovies && trendingMovies.length > 0) {
-      sections.push({
-        title: '🔥 Trending This Week',
-        data: chunkArray(trendingMovies, 3)
-      });
-    }
-
-    // Add popular section with filtered movies
+    // Add popular movies section
     if (popularMovies && popularMovies.length > 0) {
-      const trendingIds = new Set((trendingMovies || []).map(m => m.id));
-      const uniquePopular = popularMovies.filter(movie => !trendingIds.has(movie.id));
-
-      if (uniquePopular.length > 0) {
-        sections.push({
-          title: '📽️ Popular Movies',
-          data: chunkArray(uniquePopular, 3)
-        });
-      }
-    }
-
-    // If no trending movies, show all popular movies
-    if ((!trendingMovies || trendingMovies.length === 0) && popularMovies && popularMovies.length > 0) {
       sections.push({
         title: '📽️ Popular Movies',
         data: chunkArray(popularMovies, 3)
@@ -84,8 +47,8 @@ export default function Index() {
     return sections;
   };
 
-  const isInitialLoading = trendingLoading || popularLoading;
-  const hasError = popularError; // Only show error for popular movies, trending is optional
+  const isInitialLoading = popularLoading;
+  const hasError = popularError;
 
   const renderMovieRow = ({ item }: { item: Movie[] }) => (
     <View className="flex-row justify-between px-5 mb-3">

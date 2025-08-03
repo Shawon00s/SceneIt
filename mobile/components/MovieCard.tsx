@@ -1,5 +1,4 @@
 import { icons } from '@/constants/icons'
-import { trackMovieSearch } from '@/services/api'
 import { Link } from 'expo-router'
 import React from 'react'
 import { Image, Text, TouchableOpacity, View } from 'react-native'
@@ -8,17 +7,10 @@ import SaveButton from './SaveButton'
 const MovieCard = ({ id, poster_path, title, vote_average, release_date, ...movie }: Movie) => {
     const fullMovie: Movie = { id, poster_path, title, vote_average, release_date, ...movie };
 
-    const handleMoviePress = () => {
-        // Track movie interaction for trending
-        trackMovieSearch(fullMovie).catch(err =>
-            console.log('Failed to track movie interaction:', title)
-        );
-    };
-
     return (
         <View className='w-[30%]'>
             <Link href={`/movies/${id}`} asChild>
-                <TouchableOpacity onPress={handleMoviePress}>
+                <TouchableOpacity>
                     <Image
                         source={{
                             uri: poster_path ? `https://image.tmdb.org/t/p/w500${poster_path}` : 'https://placeholder.co/600x400/1a1a11a/ffffff.png'

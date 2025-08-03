@@ -15,14 +15,6 @@ interface Movie {
   vote_count: number;
 }
 
-interface TrendingMovie {
-  searchTerm: string;
-  movie_id: number;
-  title: string;
-  count: number;
-  poster_url: string;
-}
-
 interface MovieDetails {
   adult: boolean;
   backdrop_path: string | null;
@@ -69,11 +61,6 @@ interface MovieDetails {
   video: boolean;
   vote_average: number;
   vote_count: number;
-}
-
-interface TrendingCardProps {
-  movie: TrendingMovie;
-  index: number;
 }
 
 interface Review {

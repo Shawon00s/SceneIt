@@ -1,11 +1,10 @@
 # 🎬 SceneIt
 
-SceneIt is a modern movie discovery mobile application built with React Native, Expo, and Node.js. Discover trending movies, search for your favorites, save movies to watch later, and get personalized recommendations.
+SceneIt is a modern movie discovery mobile application built with React Native, Expo, and Node.js. Discover popular movies, search for your favorites, save movies to watch later, and get personalized recommendations.
 
 ## 📱 Features
 
-- **🔥 Trending Movies**: Discover what's trending this week
-- **🔍 Movie Search**: Search through thousands of movies with real-time results
+- ** Movie Search**: Search through thousands of movies with real-time results
 - **💾 Save Movies**: Save movies to your personal watchlist
 - **🎭 Movie Details**: View detailed information including cast, ratings, and synopsis
 - **📱 Cross-Platform**: Available on iOS, Android, and Web
@@ -103,7 +102,7 @@ SceneIt/
 ├── mobile/                          # React Native mobile app
 │   ├── app/                         # App screens (file-based routing)
 │   │   ├── (tabs)/                  # Tab navigation screens
-│   │   │   ├── index.tsx           # Home screen (trending/popular movies)
+│   │   │   ├── index.tsx           # Home screen (popular movies)
 │   │   │   ├── search.tsx          # Search screen
 │   │   │   ├── saved.tsx           # Saved movies screen
 │   │   │   └── profile.tsx         # User profile screen
@@ -128,13 +127,11 @@ SceneIt/
 ├── backend/                         # Node.js API server
 │   ├── src/
 │   │   ├── controllers/            # Route controllers
-│   │   │   └── trendingController.js
 │   │   ├── models/                 # MongoDB models
 │   │   │   ├── User.js            # User model
 │   │   │   └── MovieSearch.js     # Movie search tracking
 │   │   ├── routes/                 # API routes
-│   │   │   ├── authRoutes.js      # Authentication routes
-│   │   │   └── trendingRoutes.js  # Trending movies routes
+│   │   │   └── authRoutes.js      # Authentication routes
 │   │   ├── lib/
 │   │   │   └── db.js              # Database connection
 │   │   └── index.js               # Server entry point
@@ -201,7 +198,7 @@ SceneIt implements secure user authentication with:
 
 ## 📱 App Screens
 
-1. **Home Tab**: Browse trending and popular movies
+1. **Home Tab**: Browse popular movies
 2. **Search Tab**: Search for specific movies
 3. **Saved Tab**: View your saved watchlist
 4. **Profile Tab**: User account management
@@ -213,10 +210,6 @@ SceneIt implements secure user authentication with:
 - `POST /api/auth/register` - User registration
 - `POST /api/auth/login` - User login
 - `GET /api/auth/profile` - Get user profile
-
-### Movies
-- `GET /api/trending/movies` - Get trending movies
-- `POST /api/trending/search` - Track movie searches
 
 ## 🚀 Deployment
 

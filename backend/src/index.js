@@ -3,7 +3,6 @@ import cors from 'cors';
 import "dotenv/config";
 
 import authRoutes from './routes/authRoutes.js';
-import trendingRoutes from './routes/trendingRoutes.js';
 import { connectDB } from './lib/db.js';
 
 const app = express();
@@ -15,7 +14,6 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/trending', trendingRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
