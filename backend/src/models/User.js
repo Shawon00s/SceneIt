@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema(
             required: true,
             unique: true,
         },
-        email:{
+        email: {
             type: String,
             required: true,
             unique: true,
@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema(
 )
 
 // Hashing the password before saving
-userSchema.pre("save", async function(next){ // Using a pre hook
+userSchema.pre("save", async function (next) { // Using a pre hook
     if (!this.isModified("password")) {
         return next(); // If the password is not modified, skip hashing
     }
@@ -35,6 +35,11 @@ userSchema.pre("save", async function(next){ // Using a pre hook
     this.password = await bcrypt.hash(this.password, salt);
     next(); // Calling next to continue the save operation
 })
+
+// Method to compare passwords
+userSchema.methods.comparePassword = async function (candidatePassword) {
+    return await bcrypt.compare(candidatePassword, this.password);
+};
 
 const User = mongoose.model("User", userSchema);
 export default User;

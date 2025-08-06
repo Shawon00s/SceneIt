@@ -1,4 +1,5 @@
 import express from 'express';
+import jwt from 'jsonwebtoken';
 import User from '../models/user.js';
 
 const router = express.Router();
@@ -37,8 +38,8 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'Username already exists' });
     }
 
-    // Getting a random avatar via API
-    const profileImage = `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`;
+    // Getting a random avatar via API (PNG format for better React Native support)
+    const profileImage = `https://api.dicebear.com/7.x/avataaars/png?seed=${username}&size=96`;
 
     const user = new User({
       email,
@@ -48,10 +49,10 @@ router.post('/register', async (req, res) => {
     });
 
     await user.save();
-    
+
     const token = generateToken(user._id); // Assuming you have a method to generate auth token
 
-    res.status(201).json({ 
+    res.status(201).json({
       token,
       user: {
         _id: user._id,
@@ -67,8 +68,42 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-  // Handle login
-  res.send('Login route');
+  try {
+    const { email, password } = req.body;
+
+    // Validate input
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
+    // Find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    // Check password
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    // Generate token
+    const token = generateToken(user._id);
+
+    res.json({
+      token,
+      user: {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        profileImage: user.profileImage,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
 });
 
 export default router;
