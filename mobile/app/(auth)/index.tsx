@@ -9,6 +9,7 @@ import {
     Alert,
     Image,
 } from "react-native";
+import { LinearGradient } from 'expo-linear-gradient';
 import styles from "../../assets/styles/login.styles";
 import { Ionicons } from "@expo/vector-icons";
 import COLORS from "../../constants/colors";
@@ -90,7 +91,22 @@ export default function Login() {
                 <View style={styles.card}>
                     {/* HEADER */}
                     <View style={styles.header}>
-                        <Image source={icons.logo} style={{ width: 60, height: 50, marginBottom: 16 }} resizeMode="contain" />
+                        <LinearGradient
+                            colors={['#000000', '#333333', '#000000']}
+                            style={{
+                                borderRadius: 50,
+                                padding: 10,
+                                marginBottom: 20,
+                                shadowColor: '#000',
+                                shadowOffset: { width: 0, height: 4 },
+                                shadowOpacity: 0.3,
+                                shadowRadius: 8,
+                                elevation: 8,
+                                alignSelf: 'center',
+                            }}
+                        >
+                            <Image source={icons.logo} style={{ width: 80, height: 60 }} resizeMode="contain" />
+                        </LinearGradient>
                         <Text style={styles.title}>Welcome Back</Text>
                         <Text style={styles.subtitle}>Sign in to SceneIt 🎬</Text>
                     </View>

@@ -1,12 +1,12 @@
 import MovieCard from "@/components/MovieCard";
-import SearchBar from "@/components/SearchBar";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 import { fetchMoviesPage } from "@/services/api";
 import useInfiniteScroll from "@/services/useInfiniteScroll";
 import { useRouter } from "expo-router";
-import { ActivityIndicator, SectionList, Image, Text, View } from "react-native";
-import React, { useMemo, useCallback } from "react";
+import { ActivityIndicator, SectionList, Image, Text, View, InteractionManager } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import React, { useMemo, useCallback, useEffect } from "react";
 
 export default function Index() {
   const router = useRouter();
@@ -19,45 +19,66 @@ export default function Index() {
     error: popularError,
     hasMore,
     loadMore,
+    refresh,
   } = useInfiniteScroll({
     fetchFunction: (page: number) => fetchMoviesPage({ query: "", page }),
-    pageSize: 20,
+    pageSize: 15, // Reduced page size for faster loading
   });
+
+  // Defer non-critical operations using InteractionManager
+  useEffect(() => {
+    const interactionPromise = InteractionManager.runAfterInteractions(() => {
+      // Load additional data after the UI is responsive
+      if (popularMovies?.length < 30 && hasMore && !loadingMore) {
+        loadMore();
+      }
+    });
+
+    return () => interactionPromise.cancel();
+  }, [popularMovies?.length, hasMore, loadingMore, loadMore]);
+
+  // Optimized chunk array function
+  const chunkArray = useCallback((arr: Movie[], size: number) => {
+    if (!arr || arr.length === 0) return [];
+    const chunks = [];
+    for (let i = 0; i < arr.length; i += size) {
+      chunks.push(arr.slice(i, i + size));
+    }
+    return chunks;
+  }, []);
 
   // Memoize sections to prevent unnecessary re-renders
   const sections = useMemo(() => {
     if (!popularMovies || popularMovies.length === 0) return [];
 
-    // Helper function to chunk array into groups of 3
-    const chunkArray = (arr: Movie[], size: number) => {
-      const chunks = [];
-      for (let i = 0; i < arr.length; i += size) {
-        chunks.push(arr.slice(i, i + size));
-      }
-      return chunks;
-    };
-
     return [{
       title: '📽️ Popular Movies',
       data: chunkArray(popularMovies, 3)
     }];
-  }, [popularMovies]);
+  }, [popularMovies, chunkArray]);
 
   const isInitialLoading = popularLoading;
   const hasError = popularError;
 
   // Memoized render functions for better performance
-  const renderMovieRow = useCallback(({ item }: { item: Movie[] }) => (
-    <View className="flex-row justify-between px-5 mb-3">
-      {item.map((movie) => (
-        <MovieCard key={movie.id} {...movie} />
-      ))}
-      {/* Fill empty slots if row has less than 3 items */}
-      {item.length < 3 && [...Array(3 - item.length)].map((_, index) => (
-        <View key={`empty-${index}`} className="w-[30%]" />
-      ))}
-    </View>
-  ), []);
+  const renderMovieRow = useCallback(({ item, index: rowIndex }: { item: Movie[], index: number }) => {
+    // Pre-calculate all derived data before rendering
+    const movieItems = item.map((movie, index) => (
+      <MovieCard key={`movie-${rowIndex}-${index}-${movie.id}`} {...movie} />
+    ));
+
+    const emptySlots = item.length < 3 ?
+      [...Array(3 - item.length)].map((_, index) => (
+        <View key={`empty-${rowIndex}-${index}`} className="w-[30%]" />
+      )) : null;
+
+    return (
+      <View className="flex-row justify-between px-5 mb-3">
+        {movieItems}
+        {emptySlots}
+      </View>
+    );
+  }, []);
 
   const renderSectionHeader = useCallback(({ section }: { section: { title: string } }) => (
     <View className="px-5 mb-3 mt-5">
@@ -67,10 +88,6 @@ export default function Index() {
     </View>
   ), []);
 
-  const handleSearchPress = useCallback(() => {
-    router.push("/search");
-  }, [router]);
-
   const handleEndReached = useCallback(() => {
     if (hasMore && !loadingMore) {
       loadMore();
@@ -78,14 +95,10 @@ export default function Index() {
   }, [hasMore, loadingMore, loadMore]);
 
   const ListHeaderComponent = useMemo(() => (
-    <View className="px-5">
-      <Image source={icons.logo} className="w-12 h-10 mt-20 mb-5 mx-auto" />
-      <SearchBar
-        onPress={handleSearchPress}
-        placeholder="Search for a movie"
-      />
+    <View className="px-5 pb-3">
+      {/* Logo moved outside - this is just for spacing */}
     </View>
-  ), [handleSearchPress]);
+  ), []);
 
   const ListFooterComponent = useMemo(() => (
     loadingMore ? (
@@ -96,12 +109,12 @@ export default function Index() {
   ), [loadingMore]);
 
   return (
-    <View className="flex-1 bg-primary">
-      <Image source={images.bg} className="absolute w-full z-0" resizeMode="cover" />
+    <SafeAreaView className="flex-1 bg-primary">
+      <Image source={images.bg} className="absolute w-full h-full" resizeMode="cover" />
 
       {isInitialLoading ? (
         <View className="flex-1 justify-center items-center">
-          <Image source={icons.logo} className="w-12 h-10 mb-5" />
+          <Image source={icons.logo} className="w-28 h-20 mb-5" resizeMode="contain" />
           <ActivityIndicator
             size="large"
             color="#0000ff"
@@ -109,30 +122,44 @@ export default function Index() {
         </View>
       ) : hasError ? (
         <View className="flex-1 justify-center items-center px-5">
-          <Image source={icons.logo} className="w-auto h-10 mb-5" />
+          <Image source={icons.logo} className="w-28 h-20 mb-5" resizeMode="contain" />
           <Text className="text-white text-center">
             Error: {typeof hasError === 'string' ? hasError : 'Unable to load movies'}
           </Text>
         </View>
       ) : (
-        <SectionList
-          sections={sections}
-          renderItem={renderMovieRow}
-          renderSectionHeader={renderSectionHeader}
-          keyExtractor={(item, index) => `row-${index}-${item.map(m => m.id).join('-')}`}
-          ListHeaderComponent={ListHeaderComponent}
-          ListFooterComponent={ListFooterComponent}
-          onEndReached={handleEndReached}
-          onEndReachedThreshold={0.5}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 20 }}
-          stickySectionHeadersEnabled={false}
-          removeClippedSubviews={true}
-          maxToRenderPerBatch={5} // Render 5 rows per batch
-          windowSize={8} // Keep 8 screens worth of items in memory
-          initialNumToRender={10} // Render first 10 rows immediately
-        />
+        <View className="flex-1">
+          {/* Fixed Logo */}
+          <View className="px-5 pt-5 pb-3">
+            <Image source={icons.logo} className="w-28 h-20 mx-auto" resizeMode="contain" />
+          </View>
+
+          {/* Scrollable Content */}
+          <SectionList
+            sections={sections}
+            renderItem={renderMovieRow}
+            renderSectionHeader={renderSectionHeader}
+            keyExtractor={(item, sectionIndex) => `section-${sectionIndex}-row-${sectionIndex}`}
+            ListHeaderComponent={ListHeaderComponent}
+            ListFooterComponent={ListFooterComponent}
+            onEndReached={handleEndReached}
+            onEndReachedThreshold={0.5}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 20 }}
+            stickySectionHeadersEnabled={false}
+            removeClippedSubviews={true}
+            maxToRenderPerBatch={3} // Reduced batch size for smoother scrolling
+            windowSize={5} // Smaller window size to reduce memory usage
+            initialNumToRender={5} // Render fewer rows initially for faster first render
+            updateCellsBatchingPeriod={50} // Batch cell updates every 50ms
+            getItemLayout={(data, index) => ({
+              length: 200, // Approximate height of each row
+              offset: 200 * index,
+              index
+            })}
+          />
+        </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 }

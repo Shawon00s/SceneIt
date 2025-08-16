@@ -6,6 +6,7 @@ import { fetchMovies } from '@/services/api';
 import useFetch from '@/services/useFetch';
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { ActivityIndicator, FlatList, Image, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const search = () => {
   //useState for search
@@ -46,20 +47,10 @@ const search = () => {
   // Memoized ListHeaderComponent
   const ListHeaderComponent = useMemo(() => (
     <>
-      <View className="w-full flex-row justify-center mt-20 items-center">
-        <Image source={icons.logo} className="w-12 h-10" />
-      </View>
-
-      <View className='my-5'>
-        <SearchBar
-          placeholder='Search movies ...'
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-      </View>
-
       {loading && (
-        <ActivityIndicator size="large" color="#0000ff" />
+        <View className="py-4">
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
       )}
 
       {error && (
@@ -69,7 +60,7 @@ const search = () => {
       )}
 
       {!loading && !error && searchQuery.trim() && movies && movies.length > 0 && (
-        <Text className='text-xl text-white font-bold'>
+        <Text className='text-xl text-white font-bold mb-4'>
           Search Results for {' '}
           <Text className='text-accent'>{searchQuery}</Text>
         </Text>
@@ -91,8 +82,21 @@ const search = () => {
   ), [loading, error, searchQuery]);
 
   return (
-    <View className="flex-1 bg-primary">
-      <Image source={images.bg} className='flex-1 absolute w-full z-0' resizeMode='cover' />
+    <SafeAreaView className="flex-1 bg-primary">
+      <Image source={images.bg} className="absolute w-full h-full" resizeMode="cover" />
+
+      {/* Fixed Logo and Search Bar Section */}
+      <View className="bg-transparent pt-5 pb-3 px-5">
+        <View className="w-full flex-row justify-center items-center mb-4">
+          <Image source={icons.logo} className="w-28 h-20" resizeMode="contain" />
+        </View>
+
+        <SearchBar
+          placeholder='Search movies ...'
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+      </View>
 
       <FlatList
         data={movies}
@@ -116,7 +120,7 @@ const search = () => {
         initialNumToRender={15} // Render first 15 items immediately
         getItemLayout={undefined} // Let FlatList calculate for better performance with variable heights
       />
-    </View>
+    </SafeAreaView>
   );
 }
 

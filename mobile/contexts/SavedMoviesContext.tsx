@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import { InteractionManager } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface SavedMoviesContextType {
@@ -19,7 +20,12 @@ export const SavedMoviesProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     // Load saved movies from AsyncStorage on app start
     useEffect(() => {
-        loadSavedMovies();
+        // Use InteractionManager to defer loading until after animations
+        const interactionPromise = InteractionManager.runAfterInteractions(() => {
+            loadSavedMovies();
+        });
+
+        return () => interactionPromise.cancel();
     }, []);
 
     const loadSavedMovies = async () => {
@@ -35,16 +41,37 @@ export const SavedMoviesProvider: React.FC<{ children: React.ReactNode }> = ({ c
         }
     };
 
-    const saveTotStorage = useCallback(async (movies: Movie[]) => {
-        try {
-            await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(movies));
-        } catch (error) {
-            console.error('Error saving movies to storage:', error);
-        }
-    }, []);
+    // Debounced storage function
+    const saveTotStorage = useCallback(
+        (() => {
+            let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+            return (movies: Movie[]) => {
+                // Clear previous timeout if it exists
+                if (timeoutId !== null) {
+                    clearTimeout(timeoutId);
+                }
+
+                // Set a new timeout to delay the storage operation
+                timeoutId = setTimeout(async () => {
+                    try {
+                        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(movies));
+                    } catch (error) {
+                        console.error('Error saving movies to storage:', error);
+                    }
+                    timeoutId = null;
+                }, 300); // Debounce for 300ms
+            };
+        })(),
+        []
+    );
 
     const addToSaved = useCallback((movie: Movie) => {
         setSavedMovies(prevMovies => {
+            // Check if movie already exists to prevent duplicates
+            if (prevMovies.some(m => m.id === movie.id)) {
+                return prevMovies;
+            }
             const updatedMovies = [...prevMovies, movie];
             saveTotStorage(updatedMovies);
             return updatedMovies;

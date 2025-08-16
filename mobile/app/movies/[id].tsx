@@ -14,6 +14,7 @@ import { icons } from "@/constants/icons";
 import useFetch from "@/services/useFetch";
 import { fetchMovieDetails, fetchMovieReviews, fetchMovieCredits } from "@/services/api";
 import SaveButton from "@/components/SaveButton";
+import StarRating from "@/components/StarRating";
 
 interface MovieInfoProps {
   label: string;
@@ -177,6 +178,17 @@ const Details = () => {
               "N/A"
             }
           />
+
+          {/* Star Rating Section */}
+          {movie && (
+            <StarRating
+              movieId={movie.id}
+              onRatingChange={(rating) => {
+                console.log(`User rated movie ${movie.id} with ${rating} stars`);
+                // Here you can add logic to save the rating to your backend
+              }}
+            />
+          )}
 
           {/* Reviews Section */}
           <View className="flex-col items-start justify-center mt-8">
