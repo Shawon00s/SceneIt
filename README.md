@@ -1,16 +1,24 @@
 # 🎬 SceneIt
 
-SceneIt is a modern movie discovery mobile application built with React Native, Expo, and Node.js. Discover popular movies, search for your favorites, save movies to watch later, and get personalized recommendations.
+SceneIt is a modern movie discovery mobile application built with React Native, Expo, and Node.js. Di   ├── components/                  # Reusable UI components
+   │   ├── MovieCard.tsx           # Movie card component
+   │   ├── SaveButton.tsx          # Save movie button
+   │   ├── SearchBar.tsx           # Search input component
+   │   └── StarRating.tsx          # 5-star rating componenter popular movies, search for your favorites, save movies to watch later, and get personalized recommendations.
 
 ## 📱 Features
 
-- ** Movie Search**: Search through thousands of movies with real-time results
+- **🔍 Movie Search**: Search through thousands of movies with real-time results
 - **💾 Save Movies**: Save movies to your personal watchlist
 - **🎭 Movie Details**: View detailed information including cast, ratings, and synopsis
-- **📱 Cross-Platform**: Available on iOS, Android, and Web
+- **⭐ Movie Rating**: Interactive 5-star rating system with persistent storage
+- **� User Profiles**: Profile management with Dicebear avatars
+- **�📱 Cross-Platform**: Available on iOS, Android, and Web
 - **🎨 Modern UI**: Beautiful interface with NativeWind (Tailwind CSS for React Native)
-- **🔐 User Authentication**: Secure user accounts and personalized experience
+- **🔐 User Authentication**: Secure user accounts with JWT and bcrypt encryption
+- **🌈 Gradient Design**: Elegant black gradient containers and visual effects
 - **🚀 Real-time Data**: Powered by The Movie Database (TMDB) API
+- **⚡ Performance Optimized**: Infinite scroll, image optimization, and smooth animations
 
 ## 🏗️ Architecture
 
@@ -20,13 +28,16 @@ This project follows a full-stack architecture:
 - **Framework**: React Native with Expo
 - **Routing**: Expo Router (file-based routing)
 - **Styling**: NativeWind (Tailwind CSS)
-- **State Management**: React Context API
+- **State Management**: Zustand, React Context API, AsyncStorage
 - **API Integration**: Custom hooks with TypeScript
+- **UI Components**: StarRating, MovieCard, SaveButton, SearchBar
+- **Authentication**: JWT with secure token storage
 
 ### Backend (API Server)
 - **Runtime**: Node.js with Express.js
 - **Database**: MongoDB with Mongoose ODM
 - **Authentication**: JWT (JSON Web Tokens) with bcrypt
+- **Profile Images**: Dicebear API integration for user avatars
 - **External APIs**: The Movie Database (TMDB) API integration
 
 ## 🚀 Quick Start
@@ -164,8 +175,11 @@ npm run dev        # Start development server with nodemon
 - **TypeScript** - Type-safe JavaScript
 - **NativeWind** - Tailwind CSS for React Native
 - **Expo Router** - File-based navigation
-- **React Context** - State management
+- **Zustand** - Lightweight state management
+- **React Context** - Additional state management
+- **AsyncStorage** - Local data persistence
 - **Expo Image** - Optimized image component
+- **Expo Linear Gradient** - Gradient effects
 
 ### Backend
 - **Node.js** - JavaScript runtime
@@ -178,31 +192,39 @@ npm run dev        # Start development server with nodemon
 
 ### External APIs
 - **The Movie Database (TMDB)** - Movie data and images
+- **Dicebear API** - User avatar generation
 
 ## 🔐 Authentication
 
 SceneIt implements secure user authentication with:
 - JWT token-based authentication
 - Password encryption using bcrypt
+- Automatic profile image generation via Dicebear API
 - Protected routes for saved movies and user profiles
 - Secure token storage using AsyncStorage
+- Session persistence across app restarts
 
 ## 🎨 UI/UX Features
 
 - **Responsive Design**: Optimized for all screen sizes
-- **Dark Theme**: Modern dark interface
+- **Dark Theme**: Modern dark interface with gradient effects
+- **Fixed Logo Headers**: Consistent branding across all screens
 - **Smooth Animations**: Using React Native Reanimated
 - **Infinite Scroll**: Seamless movie browsing experience
 - **Image Optimization**: Fast loading with Expo Image
 - **Search Debouncing**: Optimized search performance
+- **Interactive Ratings**: 5-star rating system with visual feedback
+- **Gradient Containers**: Elegant black gradient designs
+- **Professional Styling**: Clean, modern interface elements
 
 ## 📱 App Screens
 
-1. **Home Tab**: Browse popular movies
-2. **Search Tab**: Search for specific movies
-3. **Saved Tab**: View your saved watchlist
-4. **Profile Tab**: User account management
-5. **Movie Details**: Detailed movie information
+1. **Home Tab**: Browse popular movies with infinite scroll
+2. **Search Tab**: Search for specific movies with real-time results
+3. **Saved Tab**: View your saved watchlist with easy management
+4. **Profile Tab**: User account management with avatar display
+5. **Movie Details**: Detailed movie information with ratings, reviews, and 5-star rating system
+6. **Authentication**: Login and signup screens with gradient design
 
 ## 🔄 API Endpoints
 
@@ -240,8 +262,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 - [The Movie Database (TMDB)](https://www.themoviedb.org/) for providing the movie data API
+- [Dicebear](https://dicebear.com/) for avatar generation API
 - [Expo](https://expo.dev/) for the amazing development platform
 - [React Native](https://reactnative.dev/) for cross-platform mobile development
+- [NativeWind](https://www.nativewind.dev/) for Tailwind CSS integration
 
 ## 📞 Support
 
