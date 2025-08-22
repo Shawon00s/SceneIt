@@ -1,10 +1,6 @@
 # 🎬 SceneIt
 
-SceneIt is a modern movie discovery mobile application built with React Native, Expo, and Node.js. Di   ├── components/                  # Reusable UI components
-   │   ├── MovieCard.tsx           # Movie card component
-   │   ├── SaveButton.tsx          # Save movie button
-   │   ├── SearchBar.tsx           # Search input component
-   │   └── StarRating.tsx          # 5-star rating componenter popular movies, search for your favorites, save movies to watch later, and get personalized recommendations.
+SceneIt is a modern movie discovery mobile application built with React Native, Expo, and Node.js. Discover popular movies, search for your favorites, save movies to watch later, and get personalized recommendations.
 
 ## 📱 Features
 
@@ -255,10 +251,6 @@ The backend can be deployed to:
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## 🙏 Acknowledgments
 
 - [The Movie Database (TMDB)](https://www.themoviedb.org/) for providing the movie data API
@@ -272,5 +264,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 If you have any questions or need help with setup, please open an issue on GitHub or contact the development team.
 
 ---
-
-Made with ❤️ by the SceneIt Team
